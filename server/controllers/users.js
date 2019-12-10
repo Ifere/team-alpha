@@ -1,17 +1,27 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken')
 const User = require("../models/users");
+const secret = {
+    secret:'dangermouse'
+}
 
-const createUser = async (req, res) => {
+
+const createUser = async (req, res) => { //done
     try {
         if (req.body.email) {
             req.body.email = req.body.email.toLowerCase();
         }
         const data = await User.create(req.body);
+        jwt.sign({data},secret.secret,(err,token=>{
+            if (err) res.send(err)
+            res.json({
+                success: true,
+                data,
+                token
+            });
 
-        res.json({
-            success: true,
-            data,
-        });
+
+        }))
     } catch (error) {
         res.json({
             success: false,
@@ -20,7 +30,7 @@ const createUser = async (req, res) => {
     }
 };
 
-const loginUser = async (req, res) => {
+const loginUser = async (req, res) => { //done
     try {
 
         const { email, password } = req.body;
@@ -30,13 +40,19 @@ const loginUser = async (req, res) => {
         }
         const isPasswordMatch = await bcrypt.compare(password, data.password);
         if (!isPasswordMatch) {
-            throw new Error('Invalid login credentials');
+            res.status(401).send('Invalid login credentials')
         }
+        jwt.sign({data},secret.secret,(err,token)=>{
+            if(err) res.send(err);
+            res.json({
+                success: true,
+                data,
+                token
+            });
+            
+        })
 
-        res.json({
-            success: true,
-            data,
-        });
+        
     } catch (err) {
         res.json({
             success: false,
@@ -47,7 +63,7 @@ const loginUser = async (req, res) => {
 
 
 
-const getUser = async (req, res) => {
+const getUser = async (req, res) => { //done
     try {
         const { id } = req.params;
         const data = await User.findById(id);
@@ -64,7 +80,7 @@ const getUser = async (req, res) => {
     }
 };
 
-const fetchUsers = async (req, res) => {
+const fetchUsers = async (req, res) => { //done
     try {
         let filter = req.query;
         const data = await User.find(filter).sort({ $natural: -1 })
@@ -82,19 +98,23 @@ const fetchUsers = async (req, res) => {
 };
 
 
-const updateUserDetails = async (req, res) => {
+const updateUserDetails = async (req, res) => { //done
     try {
-        const { id } = req.params;
-        const update = req.body;
-
-        if (update.password !== undefined || update.password === '') {
-            update.password = await bcrypt.hash(update.password, 8);
-        }
-        const data = await User.findByIdAndUpdate(id, { $set: update }, { new: true });
+        jwt.verify(req.token , secret.secret , async (err,decoded)=>{
+            if(err) res.send(err)
+            const id  = decoded.id;
+            const update = req.body;
+            if (update.password !== undefined || update.password === '') {
+                update.password = await bcrypt.hash(update.password, 8);
+            }
+            const data =await  User.findByIdAndUpdate(id, { $set: update }, { new: true });
         res.json({
             success: true,
             data,
         });
+            
+        }) 
+        
     } catch (err) {
         console.log(err);
         res.json({
@@ -105,14 +125,19 @@ const updateUserDetails = async (req, res) => {
 };
 
 
-const deleteUser = async (req, res) => {
+const deleteUser = async (req, res) => { //done
     try {
-        const { id } = req.params;
-        const data = await User.findByIdAndDelete(id);
-        res.json({
-            success: true,
-            data,
-        });
+        jwt.verify(req.token , secret.secret ,async(err,decoded)=>{
+            if(err) res.send(err)
+            const id = decoded.id 
+            const data =await User.findByIdAndDelete(id);
+            res.json({
+                success: true,
+                data,
+            });
+
+        })
+        
     } catch (err) {
         console.log(err);
         res.json({
