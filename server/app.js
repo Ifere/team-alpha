@@ -1,4 +1,6 @@
 const db = require("../server/config/mongodb");
+const cors = require("cors");
+const express = require('express');
 const userApi = require("../server/routes/users");
 const teamApi = require("../server/routes/teams");
 const projectApi = require("../server/routes/projects");
@@ -10,8 +12,8 @@ const app = express();
 // connects to db
 db.connectMongodb();
 app.use(cors());
-app.use(bodyparser.json());
-app.use(bodyparser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 // mount apiRouter on app
 
 app.use('/v1', userApi);

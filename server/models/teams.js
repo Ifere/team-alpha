@@ -27,4 +27,4 @@ const teamSchema = new Schema({
         type: Number,
     },
 })
-module.exports = mongoose.Model(Team, teamSchema)
+module.exports = mongoose.model("Team", teamSchema)

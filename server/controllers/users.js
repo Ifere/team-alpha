@@ -1,5 +1,4 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const User = require("../models/users");
 
 const createUser = async (req, res) => {
@@ -20,6 +19,33 @@ const createUser = async (req, res) => {
         });
     }
 };
+
+const loginUser = async (req, res) => {
+    try {
+
+        const { email, password } = req.body;
+        const data = await User.findOne({ email });
+        if (!data) {
+            throw new Error('User not found');
+        }
+        const isPasswordMatch = await bcrypt.compare(password, data.password);
+        if (!isPasswordMatch) {
+            throw new Error('Invalid login credentials');
+        }
+
+        res.json({
+            success: true,
+            data,
+        });
+    } catch (err) {
+        res.json({
+            success: false,
+            error: err.message,
+        });
+    }
+};
+
+
 
 const getUser = async (req, res) => {
     try {
@@ -104,10 +130,10 @@ const addUserProject = async (req, res) => {
         const data = await User.findByIdAndUpdate(id,
             { $addToSet: { projects: { $each: project } } },
             { new: true });
-            res.json({
-                success: true,
-                data,
-            });       
+        res.json({
+            success: true,
+            data,
+        });
     } catch (err) {
         console.log(err);
         res.json({
@@ -119,6 +145,7 @@ const addUserProject = async (req, res) => {
 
 module.exports = {
     createUser,
+    loginUser,
     getUser,
     fetchUsers,
     updateUserDetails,

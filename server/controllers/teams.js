@@ -1,5 +1,3 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const Team = require('../models/teams');
 const User = require("../models/users");
 
@@ -132,7 +130,7 @@ const addTeamProject = async (req, res) => {
     }
 }
 
-modeule.exports = {
+module.exports = {
     createTeam,
     joinTeam,
     getTeam,

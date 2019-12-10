@@ -4,7 +4,8 @@
   "description": "NaijaHacks Hackathon",
   "main": "app.js",
   "scripts": {
-    "test": "none"
+    "test": "none",
+    "start": "node ./server/app.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,8 @@
   },
   "homepage": "https://github.com/Ifere/team-alpha#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
     "eslint": "^6.7.2",
     "express": "^4.17.1",
     "mongoose": "^5.8.0"

@@ -1,5 +1,3 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const Project = require('../models/project');
 
 const createProject = async (req, res) => {
