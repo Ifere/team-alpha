@@ -12,20 +12,19 @@ const createUser = async (req, res) => { //done
             req.body.email = req.body.email.toLowerCase();
         }
         const data = await User.create(req.body);
-        jwt.sign({data},secret.secret,(err,token=>{
-            if (err) res.send(err)
+        jwt.sign({data},secret.secret,(err,token)=>{
+            if(err) res.send(err);
             res.json({
                 success: true,
                 data,
                 token
             });
-
-
-        }))
+            
+        })
     } catch (error) {
         res.json({
             success: false,
-            error,
+            error:error.message,
         });
     }
 };
@@ -167,6 +166,7 @@ const addUserProject = async (req, res) => {
         })
     }
 }
+
 
 module.exports = {
     createUser,

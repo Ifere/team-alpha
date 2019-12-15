@@ -1,7 +1,9 @@
 const Team = require('../models/teams');
 const User = require("../models/users");
 
-const createTeam = async (req, res) => {
+const key = {}
+
+const createTeam = async (req, res) => { //cool
     try {
         const data = await Team.create(req.body);
 
@@ -58,7 +60,7 @@ const getTeam = async (req, res) => {
 const fetchTeams = async (req, res) => {
     try {
         let filter = req.query;
-        const data = await Team.find(filter).sort({ $natural: -1 })
+        const data = await Team.find(filter).sort({ $natural: 1 })
         res.json({
             success: true,
             data
